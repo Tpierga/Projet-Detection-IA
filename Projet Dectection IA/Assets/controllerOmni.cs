@@ -27,10 +27,26 @@ public class controllerOmni : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             transform.Translate(-Vector3.forward * ((Time.deltaTime) * 2));
+            if (Input.GetKey(KeyCode.A))
+            {
+                transform.Rotate(-Vector3.up);
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                transform.Rotate(Vector3.up);
+            }
         }
         else if (Input.GetKey(KeyCode.S))
         {
             transform.Translate(Vector3.forward * ((Time.deltaTime) * 2));
+            if (Input.GetKey(KeyCode.A))
+            {
+                transform.Rotate(-Vector3.up);
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                transform.Rotate(Vector3.up);
+            }
         } 
     }
 
