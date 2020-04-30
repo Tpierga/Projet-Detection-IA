@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465785, g: 0.49641252, b: 0.574817, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -601,6 +601,14 @@ PrefabInstance:
       propertyPath: snapCam
       value: 
       objectReference: {fileID: 1732908188}
+    - target: {fileID: 606692495, guid: f42d189fb042b1b4aa51eed6a77f9eec, type: 3}
+      propertyPath: sIP
+      value: 127.0.0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 606692495, guid: f42d189fb042b1b4aa51eed6a77f9eec, type: 3}
+      propertyPath: sPort
+      value: 50000
+      objectReference: {fileID: 0}
     - target: {fileID: 1854932244085986, guid: f42d189fb042b1b4aa51eed6a77f9eec, type: 3}
       propertyPath: m_Name
       value: car_prefab
