@@ -8,12 +8,18 @@ public class controllerOmni : MonoBehaviour
 {
     public string sIP = "127.0.0.1";
     public int sPort = 50000;
-    
+
     private UdpSocket server = new UdpSocket();
     private int _t = 0;
-    
+
     public SnapShotCamera snapCam;
     // Start is called before the first frame update
+    [SerializeField] private float rayDistance;
+    private Vector3 vecteur_correction = new Vector3(-0.7f, 0.5f, 0);
+    [SerializeField] private LayerMask layers;
+
+
+
     void Start()
     {
         server.Start(sIP, sPort, "test", verbose: true);
@@ -31,6 +37,7 @@ public class controllerOmni : MonoBehaviour
         }
         Forward();
         Rotate();
+        Sensors();
     }
 
     void sending_ping(int waitingTime)
@@ -82,4 +89,18 @@ public class controllerOmni : MonoBehaviour
             transform.Rotate(Vector3.up);
         }
     }
+    
+    void Sensors()
+    {
+        RaycastHit hit;
+         Debug.DrawRay(transform.position+vecteur_correction , transform.TransformDirection(-Vector3.forward) * rayDistance, Color.red);       
+         if (Physics.Raycast(transform.position +vecteur_correction , transform.TransformDirection(-Vector3.forward) * rayDistance, out hit, rayDistance,layers))
+         {
+  
+                 Debug.Log("aie");
+                 transform.Rotate(-Vector3.up);
+
+         }
+    }
+    
 }
