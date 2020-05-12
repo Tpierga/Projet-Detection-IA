@@ -1,6 +1,7 @@
 
 using System;
 using System.CodeDom.Compiler;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -147,6 +148,14 @@ namespace ConsoleApplication1
             if (!IsActive) return;
             try
             {
+                if (data.Length > 64500)
+                {
+                    byte[] imageBytes1 = data.Take(64500).ToArray();
+                    byte[] imageBytes2 = data.Skip(64500).Take(data.Length - 64500).ToArray();
+                    
+                    SendImageToProcess(target, imageBytes1);
+                    SendImageToProcess(target, imageBytes2);
+                }
                 var sendState = new State(_bufSize);
                 _socket.BeginSendTo(data, 0, data.Length, SocketFlags.None, target, (ar) =>
                 {
