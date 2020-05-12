@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using ConsoleApplication1;
@@ -23,33 +24,30 @@ public class controllerOmni : MonoBehaviour
     void Start()
     {
         server.Start(sIP, sPort, "test", verbose: true);
-        Debug.Log("server started");
-        
     }
     
     // Update is called once per frame
     void Update()
     {
-        sending_ping(100);
         if (Input.GetKeyDown(KeyCode.Space))
         {
             snapCam.TakeSnapShot();
+            Debug.Log("snapshot Taken");
         }
         Forward();
         Rotate();
-        Sensors();
+        //Sensors();
     }
 
-    void sending_ping(int waitingTime)
+    private void LateUpdate()
     {
-        _t += 1;
-        if (_t == waitingTime)
+        var bytes = snapCam.EncodeImage();
+        if (bytes != null && bytes.Length > 0)
         {
-            server.SendTo(sIP, sPort, "ping");
-            Debug.Log("send ping");
-            _t = 0;
+            server.SendImageTo("127.0.0.1", 28000, bytes);
         }
     }
+
     void Forward()
     {
         if (Input.GetKey(KeyCode.W))
@@ -96,10 +94,8 @@ public class controllerOmni : MonoBehaviour
          Debug.DrawRay(transform.position+vecteur_correction , transform.TransformDirection(-Vector3.forward) * rayDistance, Color.red);       
          if (Physics.Raycast(transform.position +vecteur_correction , transform.TransformDirection(-Vector3.forward) * rayDistance, out hit, rayDistance,layers))
          {
-  
-                 Debug.Log("aie");
+             Debug.Log("aie");
                  transform.Rotate(-Vector3.up);
-
          }
     }
     

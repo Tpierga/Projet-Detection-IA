@@ -1,3 +1,4 @@
+
 using System;
 using System.CodeDom.Compiler;
 using System.Net;
@@ -36,7 +37,7 @@ namespace ConsoleApplication1
         {
             public byte[] Buffer;
 
-            public State(int bufferSize = 8192)
+            public State(int bufferSize = 64500)
             {
                 Buffer = new byte[bufferSize];
             }
@@ -112,7 +113,7 @@ namespace ConsoleApplication1
             Thread.Sleep(1);
             if (_verbose)
             {
-                Console.WriteLine("Server started on ip {0} and port {1}.", ipAddressServer, portServer);
+                Debug.Log("Server started on ip " + ipAddressServer.ToString()+" and port "+ portServer.ToString());
             }
         }
 
@@ -135,6 +136,46 @@ namespace ConsoleApplication1
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         }
 
+        public void SendImageTo(string targetIp, int targetPort, byte[] image)
+        {
+            var target = new IPEndPoint(IPAddress.Parse(targetIp), targetPort);
+            SendImageToProcess(target, image);
+        }
+
+        private void SendImageToProcess(IPEndPoint target, byte[] data)
+        {
+            if (!IsActive) return;
+            try
+            {
+                var sendState = new State(_bufSize);
+                _socket.BeginSendTo(data, 0, data.Length, SocketFlags.None, target, (ar) =>
+                {
+                    var so = (State) ar.AsyncState;
+                    try
+                    {
+                        var bytes = _socket.EndSend(ar);
+                        if (_verbose)
+                        {
+                            Debug.Log("SEND: {0}" + bytes.ToString());
+                        }
+                    }
+                    catch
+                    {
+                        if (_verbose)
+                        {
+                            Debug.Log("Unable to send message to: {0}" + target.ToString());
+                        }
+                    }
+                }, sendState);
+            }
+            catch
+            {
+                if (_verbose)
+                {
+                    Debug.Log("Destination unavailable");
+                }
+            }
+        }
         /// <summary>
         /// This method can send a message to a given machine. The ip of the machine can be specified
         /// in the (<paramref name="targetIp"/>) parameter and the port in the (<paramref name="targetPort"/>)
