@@ -8,6 +8,7 @@ from Message import Message
 import pandas as pd
 from PIL import Image
 import io
+import time
 
 
 class UdpSocket(Thread):
@@ -26,6 +27,9 @@ class UdpSocket(Thread):
         self.ip_address: str = None
         self.last_check_ep: Tuple[str, int] = None
         self.last_check_time: datetime.datetime = datetime.datetime.now()
+        self.is_not_first: bool = False
+        self.time_rec: time = time.time()
+        self.last_image: bytearray = bytearray()
 
     def start_socket(self, ip_address_server: str, port_server: int, password: Optional[str] = "") -> None:
         """
@@ -86,9 +90,28 @@ class UdpSocket(Thread):
         print(f"From : \nip address : {address[0]}\nport : {address[1]}")
         print(len(data))
         try:
-            im = bytearray(data)
-            image = Image.open(io.BytesIO(im))
-            image.show()
+            if self.is_not_first and (time.time()-self.time_rec)<0.045:
+                if len(self.last_image) == 64500:
+                    im = self.last_image + bytearray(data)
+                elif len(data)==64500:
+                    im = bytearray(data) + self.last_image
+                self.is_not_first = False
+
+            elif self.is_not_first:
+                im = self.last_image
+                self.last_image = bytearray(data)
+
+            else:
+                self.last_image = bytearray(data)
+                self.is_not_first = True
+                im = bytearray()
+
+            if len(im) !=0:
+                image = Image.open(io.BytesIO(im))
+                image.show()
+
+            self.time_rec = time.time()
+
         except:
             print("image data, receive error")
 
